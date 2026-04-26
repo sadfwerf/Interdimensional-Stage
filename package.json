@@ -16,7 +16,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@chub-ai/stages-ts": "^0.5.2",
+    "@chub-ai/stages-ts": "0.5.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^6.1.7",
