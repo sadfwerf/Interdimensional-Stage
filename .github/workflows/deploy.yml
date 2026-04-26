@@ -20,8 +20,7 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
-          node-version: '24.2.0'
-
+          node-version: '24.2.0'          cache: 'yarn'
       - name: Confirm CHUB_AUTH_TOKEN is set
         env:
           CHUB_AUTH_TOKEN: ${{ secrets.CHUB_AUTH_TOKEN }}
@@ -105,6 +104,9 @@ jobs:
           done
       - name: Install dependencies
         run: yarn install
+
+      - name: Clear Vite cache
+        run: rm -rf node_modules/.vite
 
       - name: Build
         run: yarn build
