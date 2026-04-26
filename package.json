@@ -48,5 +48,3 @@
       "import": "./dist/index.js",
       "require": "./dist/index.umd.cjs"
     }
-  }
-}
