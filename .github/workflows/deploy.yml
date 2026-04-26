@@ -20,7 +20,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v2
         with:
-          node-version: '24.2.0'          cache: 'yarn'
+          node-version: '24.2.0'
+          cache: 'yarn'
       - name: Confirm CHUB_AUTH_TOKEN is set
         env:
           CHUB_AUTH_TOKEN: ${{ secrets.CHUB_AUTH_TOKEN }}
