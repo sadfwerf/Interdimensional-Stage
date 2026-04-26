@@ -1,6 +1,7 @@
 import {ReactElement} from "react";
 import {StageBase, StageResponse, InitialData, Message} from "@chub-ai/stages-ts";
 import {LoadResponse} from "@chub-ai/stages-ts/dist/types/load";
+import { BaseScreen } from "../screens/BaseScreen";
 
 /***
  The type that this stage persists message-level state in.
@@ -52,6 +53,7 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
      but exists as long as the instance does, i.e., the chat page is open.
      ***/
     myInternalState: {[key: string]: any};
+    private priorityMessageCallback: ((message: string) => void) | null = null;
 
     constructor(data: InitialData<InitStateType, ChatStateType, MessageStateType, ConfigType>) {
         /***
@@ -175,6 +177,14 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
     }
 
 
+    isVerticalLayout(): boolean {
+        return window.innerHeight > window.innerWidth;
+    }
+
+    setPriorityMessageCallback(callback: (message: string) => void): void {
+        this.priorityMessageCallback = callback;
+    }
+
     render(): ReactElement {
         /***
          There should be no "work" done here. Just returning the React element to display.
@@ -189,17 +199,7 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
            @link https://github.com/akarlsten/cuberun (Source)
            @link https://cuberun.adamkarlsten.com/ (Demo)
          ***/
-        return <div style={{
-            width: '100vw',
-            height: '100vh',
-            display: 'grid',
-            alignItems: 'stretch'
-        }}>
-            <div>Hello World! I'm an empty stage! With {this.myInternalState['someKey']}!</div>
-            <div>There is/are/were {this.myInternalState['numChars']} character(s)
-                and {this.myInternalState['numUsers']} human(s) here.
-            </div>
-        </div>;
+        return <BaseScreen stage={() => this} />;
     }
 
 }
