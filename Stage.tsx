@@ -186,12 +186,12 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
         // For 5 tall: center is row 2, so use 1, 2, and 3
         const centerX = Math.floor(DEFAULT_GRID_WIDTH / 2);
         const centerY = Math.floor(DEFAULT_GRID_HEIGHT / 2);
-        layout.setModuleAt(centerX, centerY + 1, createModule('director module', { id: `director-${centerX}-${centerY + 1}`, attributes: {} }));
+        layout.setModuleAt(centerX, centerY + 1, createModule('feast hall', { id: `director-${centerX}-${centerY + 1}`, attributes: {} }));
         layout.setModuleAt(centerX - 1, centerY + 1, createModule('quarters', { id: `quarters-${centerX - 1}-${centerY + 1}`, attributes: {} }));
         layout.setModuleAt(centerX, centerY, createModule('echo chamber', { id: `echo-${centerX}-${centerY}`, attributes: {} }));
         layout.setModuleAt(centerX - 1, centerY, createModule('quarters', { id: `quarters-${centerX - 1}-${centerY}`, attributes: {} }));
-        layout.setModuleAt(centerX, centerY - 1, createModule('generator', { id: `generator-${centerX}-${centerY - 1}`, attributes: {} }));
-        layout.setModuleAt(centerX - 1, centerY - 1, createModule('comms', { id: `comms-${centerX - 1}-${centerY - 1}`, attributes: {} }));
+        layout.setModuleAt(centerX, centerY - 1, createModule('brothel', { id: `generator-${centerX}-${centerY - 1}`, attributes: {} }));
+        layout.setModuleAt(centerX - 1, centerY - 1, createModule('scrying ball', { id: `comms-${centerX - 1}-${centerY - 1}`, attributes: {} }));
         this.userId = Object.values(users)[0].anonymizedId;
         this.freshSave = { player: {name: Object.values(users)[0].name, description: Object.values(users)[0].chatProfile || ''}, 
             directorModule: {name: 'Master\'s Study', roleName: 'Maid'},
@@ -345,7 +345,7 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
         }
 
         // Move a random faction rep to comms room, if any factions exist:
-        const commsModule = save.layout.getModulesWhere(m => m.type === 'comms')[0];
+        const commsModule = save.layout.getModulesWhere(m => m.type === 'scrying ball')[0];
         const eligibleFactions = Object.values(save.factions).filter(faction => faction.reputation > 0 && faction.representativeId && save.actors[faction.representativeId]);
         // If there are eligible factions and a comms module, and there is at least one non-remote actor other than the aide:
         if (eligibleFactions.length > 0 && commsModule && Object.values(save.actors).filter(a => !a.factionId && a.id !== save.aide.actorId).length > 0) {
@@ -562,7 +562,7 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
         // Initialize stationStats if missing
         if (!save.stationStats || Object.keys(save.stationStats).length < 6) {
             save.stationStats = {
-                'Systems': 3,
+                'Magic': 3,
                 'Comfort': 3,
                 'Provision': 3,
                 'Security': 3,
