@@ -6,7 +6,7 @@ import Faction from './factions/Faction';
 import { ScreenType } from './screens/BaseScreen';
 import { Build, Hotel, Restaurant, Security, AttachMoney, Favorite } from '@mui/icons-material';
 
-export type ModuleType = 'echo chamber' | 'scrying ball' | 'quarters' | 'feast hall' | 'torture chamber' | 'brothel' | 'Library' | 'Master's Study'
+export type ModuleType = 'echo chamber' | 'scrying ball' | 'quarters' | 'feast hall' | 'torture chamber' | 'brothel' | 'Library' | 'Master\'s Study'
     
     | string; // Allow string for modded modules
 

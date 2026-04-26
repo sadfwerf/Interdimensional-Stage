@@ -168,8 +168,8 @@ export async function loadReserveFaction(fullPath: string, stage: Stage): Promis
     
     const newFaction = new Faction(
         generateUuid(),
-        parsedData['name'] || data.name,
-        data.fullPath || '',
+        parsedData['name'] || item.node.definition.name,
+        fullPath,
         parsedData['description'] || '',
         parsedData['visualstyle'] || '',
         parsedData['roles'] ? parsedData['roles'].split(',').map((role: string) => role.trim()) : [],
