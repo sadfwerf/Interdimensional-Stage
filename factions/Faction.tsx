@@ -4,7 +4,6 @@ import Actor, { generateBaseActorImage, loadReserveActor } from "../actors/Actor
 import { AspectRatio } from "@chub-ai/stages-ts";
 import { Module, MODULE_TEMPLATES, ModuleIntrinsic, registerFactionModule } from "../Module";
 
-
 class Faction {
     id: string;
     name: string;
