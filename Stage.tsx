@@ -170,7 +170,7 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
         console.log(characters);
         // voice_id is in the data but not on the Character type. However, it is the only field in the character data that is irreplicable by other means.
         // I believe it is the only way to verify that this chat involves the official PARC bot.
-        this.isAuthenticated = Object.values(characters).some((c: any) => c['voice_id'] === '8d387ea3-6918-4628-927a-fe024745bea2');
+        this.isAuthenticated = Object.values(characters).some((c: any) => c['voice_id'] === '289ac37e-b1fb-46db-a027-d76b88afaaaa');
         console.log('Authenticated:', this.isAuthenticated);
 
         console.log(chatState);
