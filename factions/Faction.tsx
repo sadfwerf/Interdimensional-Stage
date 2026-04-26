@@ -93,9 +93,6 @@ export async function loadReserveFaction(fullPath: string, stage: Stage): Promis
     data.name = data.name.replace(/{/g, '(').replace(/}/g, ')');
     data.personality = data.personality.replace(/{/g, '(').replace(/}/g, ')');
 
-  
-    }
-
     // Check for non-english characters
     if (Object.keys(bannedWordSubstitutes).some(word => data.personality.toLowerCase().includes(word) || data.name.toLowerCase().includes(word))) {
         console.log(`Immediately discarding faction due to banned words: ${data.name}`);

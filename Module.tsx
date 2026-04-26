@@ -287,7 +287,8 @@ export const MODULE_TEMPLATES: Record<ModuleType, ModuleIntrinsic> = {
                     context: {}
                 });
                 setScreenType(ScreenType.SKIT);
-                 },
+            }
+        },
         available: (stage: Stage) => {
             // Can have only one in stage.getSave().layout:
             return stage.getLayout().getModulesWhere(m => m.type === 'Torture Chamber').length === 0;
