@@ -159,7 +159,7 @@ export const MODULE_TEMPLATES: Record<ModuleType, ModuleIntrinsic> = {
             return stage.getLayout().getModulesWhere(m => m.type === 'echo chamber').length === 0;
         }
     },
-    Scrying Ball: {
+    'Scrying Ball': {
         name: 'Scrying Ball',
         skitPrompt: `The Scrying Ball room is the hub for all external and internal Mansion communications. ` +
             `This room is critical for communicating with external factions, with whom the Mansion finds work for slaves or conducts trade in exchange for desired resources. ` +
@@ -219,7 +219,7 @@ export const MODULE_TEMPLATES: Record<ModuleType, ModuleIntrinsic> = {
             return stage.getLayout().getModulesWhere(m => m.type === 'scrying').length === 0;
         }
     },
-    quarters: {
+    'quarters': {
         name: 'Quarters',
         skitPrompt: 'Slave quarters are personal living spaces for Mansion inhabitants. Scenes here often involve personal interactions:  revelations, troubles, interests, or relaxation.',
         imagePrompt: 'A dank dungeon cell set in a medieval fantasy setting with a bed, personal storage, and ambient lighting, reflecting the occupant\'s personality.',
@@ -248,7 +248,7 @@ export const MODULE_TEMPLATES: Record<ModuleType, ModuleIntrinsic> = {
             return true;
         }
     },
-    Feast hall: {
+    'feast hall': {
         name: 'Feast Hall',
         skitPrompt: 'The Feast Hall is a place for slaves and visitors to gather, relax, eat, and interact. Scenes here often involve camaraderie, conflicts, and leisure activities among the crew.',
         imagePrompt: 'A medieval feast hall with a large table and plentiful seating, at the head of the table sits a dark and imposing evil throne',
@@ -263,7 +263,7 @@ export const MODULE_TEMPLATES: Record<ModuleType, ModuleIntrinsic> = {
             return stage.getLayout().getModulesWhere(m => m.type === 'Feast Hall').length === 0;
         }
     },
- torture chamber: {
+    'torture chamber': {
         name: 'Torture Chamber',
         skitPrompt: 'Screams echo through these cursed halls. The air smells of rust and copper. Here, uncooperative slaves learn the weight of their defiance.',
         imagePrompt: 'A dim stone dungeon with rusty iron restraints bolted to damp walls, scattered cruel implements catching torchlight, a central rack dominant in the shadows',
@@ -295,7 +295,7 @@ export const MODULE_TEMPLATES: Record<ModuleType, ModuleIntrinsic> = {
         
     },
 
-brothel: {
+    'brothel': {
 name: 'Pleasure House',
 skitPrompt: 'Incense hangs heavy in the air, mixing with sounds of whispered promises and velvet laughter. The Mansion\'s slaves entertain guests and their master, extracting coin through more... intimate means.',
 imagePrompt: 'A lavish chamber draped in deep crimson silks and furs, plush cushions scattered across mosaic floors, ambient candlelight casting dancing shadows across oiled skin and knowing smiles',
@@ -310,7 +310,7 @@ defaultImageUrl: 'https://media.charhub.io/52526331-005c-416f-9354-c325a14ee4af/
             return stage.getLayout().getModulesWhere(m => m.type === 'Feast Hall').length === 0;
         }
 },
-library: {
+    'Library': {
         name: 'Library',
         skitPrompt: 'Ancient tomes line endless shelves, their leather bindings creaking with age and trapped knowledge. The Mansion\'s library contains forbidden texts, slave training manuals, and arcane secrets waiting for worthy eyes.',
         imagePrompt: 'A vast circular library with spiraling shelves, reading nooks tucked into alcoves, floating candles illuminating faded text, a large central desk cluttered with open books and astronomical charts',
@@ -325,7 +325,7 @@ library: {
             return stage.getLayout().getModulesWhere(m => m.type === 'library').length === 0;
         }
 },
-    Study: {
+    'Master\'s Study': {
         name: 'The Master\'s Sanctum',
         skitPrompt: 'Few are permitted entry to this private retreat. Leather chairs face a crackling fireplace, maps of conquered territories adorn the walls, and a massive oak desk holds correspondence with powers both mortal and otherwise.',
         imagePrompt: 'A richly appointed private study with dark wood paneling, shelves of rare artifacts and skulls of vanquished foes, a grand fireplace casting warm light across a bearskin rug, imposing desk facing the entrance',

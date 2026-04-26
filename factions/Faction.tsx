@@ -168,8 +168,8 @@ export async function loadReserveFaction(fullPath: string, stage: Stage): Promis
     
     const newFaction = new Faction(
         generateUuid(),
-        parsedData['name'] || item.node.definition.name,
-        fullPath,
+        parsedData['name'] || data.name,
+        data.fullPath || '',
         parsedData['description'] || '',
         parsedData['visualstyle'] || '',
         parsedData['roles'] ? parsedData['roles'].split(',').map((role: string) => role.trim()) : [],
@@ -182,6 +182,7 @@ export async function loadReserveFaction(fullPath: string, stage: Stage): Promis
     console.log(newFaction);
     
     // Validation checks
+    {
     if (!newFaction.name) {
         console.log(`Discarding faction due to missing name: ${newFaction.name}`);
         return null;
@@ -197,6 +198,7 @@ export async function loadReserveFaction(fullPath: string, stage: Stage): Promis
     } else if (/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/.test(`${newFaction.name}${newFaction.description}${newFaction.visualStyle}`)) {
         console.log(`Discarding faction due to non-english characters in name/description/visualStyle: ${newFaction.name}`);
         return null;
+    }
     }
 
     // Generate a background image for the faction:
