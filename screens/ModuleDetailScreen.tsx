@@ -1,0 +1,546 @@
+import React, { FC, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import { Close, Save, Domain, Image as ImageIcon } from '@mui/icons-material';
+import { Stage } from '../Stage';
+import { ModuleIntrinsic, generateModuleImage, registerModule } from '../Module';
+import { GlassPanel, Title, Button, TextInput } from '../components/UIComponents';
+
+interface ModuleDetailScreenProps {
+    moduleId: string;
+    module: ModuleIntrinsic;
+    stage: () => Stage;
+    onClose: () => void;
+}
+
+export const ModuleDetailScreen: FC<ModuleDetailScreenProps> = ({ moduleId, module, stage, onClose }) => {
+    const [editedModule, setEditedModule] = useState<{
+        name: string;
+        skitPrompt: string;
+        imagePrompt: string;
+        role: string;
+        roleDescription: string;
+        baseImageUrl: string;
+        defaultImageUrl: string;
+    }>({
+        name: module.name || '',
+        skitPrompt: module.skitPrompt || '',
+        imagePrompt: module.imagePrompt || '',
+        role: module.role || '',
+        roleDescription: module.roleDescription || '',
+        baseImageUrl: module.baseImageUrl || '',
+        defaultImageUrl: module.defaultImageUrl || '',
+    });
+
+    const [isSaving, setIsSaving] = useState(false);
+    const [regeneratingImage, setRegeneratingImage] = useState(false);
+    const [, forceUpdate] = useState({});
+    const [confirmDialog, setConfirmDialog] = useState<{
+        open: boolean;
+        title: string;
+        message: string;
+        onConfirm?: () => void;
+    }>({ open: false, title: '', message: '' });
+
+    const handleInputChange = (field: string, value: string) => {
+        setEditedModule((prev) => ({
+            ...prev,
+            [field]: value,
+        }));
+    };
+
+    const handleSave = () => {
+        const save = stage().getSave();
+        const existing = save.customModules?.[moduleId];
+        if (!existing) {
+            stage().showPriorityMessage('Could not find this custom module in the active save.');
+            return;
+        }
+
+        setIsSaving(true);
+
+        const updatedModule: ModuleIntrinsic = {
+            ...existing,
+            name: editedModule.name,
+            skitPrompt: editedModule.skitPrompt,
+            imagePrompt: editedModule.imagePrompt,
+            role: editedModule.role,
+            roleDescription: editedModule.roleDescription,
+            baseImageUrl: editedModule.baseImageUrl,
+            defaultImageUrl: editedModule.defaultImageUrl,
+        };
+
+        save.customModules = {
+            ...(save.customModules || {}),
+            [moduleId]: updatedModule,
+        };
+
+        registerModule(moduleId, updatedModule);
+        stage().saveGame();
+
+        setTimeout(() => {
+            setIsSaving(false);
+            onClose();
+        }, 500);
+    };
+
+    const handleRegenerateModuleImage = () => {
+        if (regeneratingImage) return;
+
+        setConfirmDialog({
+            open: true,
+            title: 'Regenerate Module Image',
+            message: 'This will regenerate the module image and replace the existing one. Continue?',
+            onConfirm: async () => {
+                setConfirmDialog((prev) => ({ ...prev, open: false }));
+                setRegeneratingImage(true);
+
+                try {
+                    const tempModule: ModuleIntrinsic = {
+                        ...module,
+                        ...editedModule,
+                        cost: module.cost || {},
+                    };
+                    await generateModuleImage(tempModule, stage());
+
+                    setEditedModule((prev) => ({
+                        ...prev,
+                        baseImageUrl: tempModule.baseImageUrl || prev.baseImageUrl,
+                        defaultImageUrl: tempModule.defaultImageUrl || prev.defaultImageUrl,
+                    }));
+                    forceUpdate({});
+                } catch (error) {
+                    console.error('Failed to regenerate module image:', error);
+                    stage().showPriorityMessage('Failed to regenerate module image. Check console for details.');
+                } finally {
+                    setRegeneratingImage(false);
+                }
+            },
+        });
+    };
+
+    return (
+        <>
+            <AnimatePresence>
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: 'rgba(0, 10, 20, 0.9)',
+                        backdropFilter: 'blur(10px)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 1100,
+                        padding: '20px',
+                    }}
+                    onClick={(e) => {
+                        const selection = window.getSelection();
+                        const hasSelection = selection && selection.toString().length > 0;
+
+                        if (e.target === e.currentTarget && !hasSelection) {
+                            onClose();
+                        }
+                    }}
+                >
+                    <motion.div
+                        initial={{ scale: 0.9, y: 50 }}
+                        animate={{ scale: 1, y: 0 }}
+                        exit={{ scale: 0.9, y: 50 }}
+                        transition={{ duration: 0.3, ease: 'easeOut' }}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                            width: '90vw',
+                            maxWidth: '1200px',
+                            maxHeight: '90vh',
+                        }}
+                    >
+                        <GlassPanel
+                            variant="bright"
+                            style={{
+                                height: '90vh',
+                                overflow: 'auto',
+                                position: 'relative',
+                                padding: '30px',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    marginBottom: '20px',
+                                    position: 'sticky',
+                                    top: 0,
+                                    background: 'rgba(0, 20, 40, 0.95)',
+                                    backdropFilter: 'blur(8px)',
+                                    padding: '10px 0',
+                                    zIndex: 10,
+                                }}
+                            >
+                                <Title variant="glow" style={{ fontSize: '24px', margin: 0 }}>
+                                    Module Details: {editedModule.name || moduleId}
+                                </Title>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <Button
+                                        onClick={handleSave}
+                                        disabled={isSaving}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                        }}
+                                    >
+                                        <Save style={{ fontSize: '20px' }} />
+                                        {isSaving ? 'Saving...' : 'Save Changes'}
+                                    </Button>
+                                    <motion.button
+                                        whileHover={{ scale: 1.1 }}
+                                        whileTap={{ scale: 0.9 }}
+                                        onClick={onClose}
+                                        style={{
+                                            background: 'transparent',
+                                            border: 'none',
+                                            color: 'rgba(0, 255, 136, 0.7)',
+                                            cursor: 'pointer',
+                                            fontSize: '24px',
+                                            padding: '5px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                        }}
+                                    >
+                                        <Close />
+                                    </motion.button>
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+                                <section>
+                                    <h2
+                                        style={{
+                                            color: '#00ff88',
+                                            fontSize: '18px',
+                                            fontWeight: 'bold',
+                                            marginBottom: '15px',
+                                            borderBottom: '2px solid rgba(0, 255, 136, 0.3)',
+                                            paddingBottom: '5px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                        }}
+                                    >
+                                        <Domain />
+                                        Custom Module
+                                    </h2>
+
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                                        <div>
+                                            <label
+                                                style={{
+                                                    display: 'block',
+                                                    color: '#00ff88',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    marginBottom: '8px',
+                                                }}
+                                            >
+                                                Module Name
+                                            </label>
+                                            <TextInput
+                                                fullWidth
+                                                value={editedModule.name}
+                                                onChange={(e) => handleInputChange('name', e.target.value)}
+                                                placeholder="Module name"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                style={{
+                                                    display: 'block',
+                                                    color: '#00ff88',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    marginBottom: '8px',
+                                                }}
+                                            >
+                                                Skit/Purpose Prompt
+                                            </label>
+                                            <textarea
+                                                value={editedModule.skitPrompt}
+                                                onChange={(e) => handleInputChange('skitPrompt', e.target.value)}
+                                                placeholder="Module's function and role on the station"
+                                                style={{
+                                                    width: '100%',
+                                                    minHeight: '80px',
+                                                    padding: '12px',
+                                                    fontSize: '14px',
+                                                    backgroundColor: 'rgba(0, 20, 40, 0.6)',
+                                                    border: '2px solid rgba(0, 255, 136, 0.3)',
+                                                    borderRadius: '5px',
+                                                    color: '#e0f0ff',
+                                                    fontFamily: 'inherit',
+                                                    resize: 'vertical',
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                style={{
+                                                    display: 'block',
+                                                    color: '#00ff88',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    marginBottom: '8px',
+                                                }}
+                                            >
+                                                Visual Description
+                                            </label>
+                                            <textarea
+                                                value={editedModule.imagePrompt}
+                                                onChange={(e) => handleInputChange('imagePrompt', e.target.value)}
+                                                placeholder="Visual description for image generation"
+                                                style={{
+                                                    width: '100%',
+                                                    minHeight: '60px',
+                                                    padding: '12px',
+                                                    fontSize: '14px',
+                                                    backgroundColor: 'rgba(0, 20, 40, 0.6)',
+                                                    border: '2px solid rgba(0, 255, 136, 0.3)',
+                                                    borderRadius: '5px',
+                                                    color: '#e0f0ff',
+                                                    fontFamily: 'inherit',
+                                                    resize: 'vertical',
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                style={{
+                                                    display: 'block',
+                                                    color: '#00ff88',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    marginBottom: '8px',
+                                                }}
+                                            >
+                                                Role Name
+                                            </label>
+                                            <TextInput
+                                                fullWidth
+                                                value={editedModule.role}
+                                                onChange={(e) => handleInputChange('role', e.target.value)}
+                                                placeholder="Role title"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                style={{
+                                                    display: 'block',
+                                                    color: '#00ff88',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    marginBottom: '8px',
+                                                }}
+                                            >
+                                                Role Description
+                                            </label>
+                                            <textarea
+                                                value={editedModule.roleDescription}
+                                                onChange={(e) => handleInputChange('roleDescription', e.target.value)}
+                                                placeholder="Responsibilities and duties"
+                                                style={{
+                                                    width: '100%',
+                                                    minHeight: '60px',
+                                                    padding: '12px',
+                                                    fontSize: '14px',
+                                                    backgroundColor: 'rgba(0, 20, 40, 0.6)',
+                                                    border: '2px solid rgba(0, 255, 136, 0.3)',
+                                                    borderRadius: '5px',
+                                                    color: '#e0f0ff',
+                                                    fontFamily: 'inherit',
+                                                    resize: 'vertical',
+                                                }}
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label
+                                                style={{
+                                                    display: 'block',
+                                                    color: '#00ff88',
+                                                    fontSize: '14px',
+                                                    fontWeight: 'bold',
+                                                    marginBottom: '8px',
+                                                }}
+                                            >
+                                                Default Image
+                                            </label>
+                                            {editedModule.defaultImageUrl && (
+                                                <div
+                                                    onClick={handleRegenerateModuleImage}
+                                                    style={{
+                                                        marginTop: '10px',
+                                                        width: '100%',
+                                                        height: '220px',
+                                                        borderRadius: '5px',
+                                                        backgroundColor: 'rgba(0, 20, 40, 0.6)',
+                                                        border: '2px solid rgba(0, 255, 136, 0.3)',
+                                                        backgroundImage: `url(${editedModule.defaultImageUrl})`,
+                                                        backgroundSize: 'cover',
+                                                        backgroundPosition: 'center',
+                                                        cursor: regeneratingImage ? 'wait' : 'pointer',
+                                                        opacity: regeneratingImage ? 0.6 : 1,
+                                                        transition: 'opacity 0.2s ease',
+                                                        position: 'relative',
+                                                    }}
+                                                >
+                                                    {regeneratingImage && (
+                                                        <div
+                                                            style={{
+                                                                position: 'absolute',
+                                                                top: '50%',
+                                                                left: '50%',
+                                                                transform: 'translate(-50%, -50%)',
+                                                                color: '#00ff88',
+                                                                fontSize: '14px',
+                                                                fontWeight: 'bold',
+                                                                textShadow: '0 0 10px rgba(0, 0, 0, 0.8)',
+                                                            }}
+                                                        >
+                                                            Regenerating...
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            )}
+                                            {!editedModule.defaultImageUrl && (
+                                                <Button
+                                                    variant="secondary"
+                                                    onClick={handleRegenerateModuleImage}
+                                                    style={{
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '8px',
+                                                        marginTop: '10px',
+                                                    }}
+                                                >
+                                                    <ImageIcon style={{ fontSize: '18px' }} />
+                                                    Generate Image
+                                                </Button>
+                                            )}
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <section>
+                                    <h2
+                                        style={{
+                                            color: '#00ff88',
+                                            fontSize: '18px',
+                                            fontWeight: 'bold',
+                                            marginBottom: '15px',
+                                            borderBottom: '2px solid rgba(0, 255, 136, 0.3)',
+                                            paddingBottom: '5px',
+                                        }}
+                                    >
+                                        Additional Information
+                                    </h2>
+                                    <div
+                                        style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                            gap: '15px',
+                                            backgroundColor: 'rgba(0, 20, 40, 0.4)',
+                                            padding: '15px',
+                                            borderRadius: '5px',
+                                            border: '1px solid rgba(0, 255, 136, 0.2)',
+                                        }}
+                                    >
+                                        <div>
+                                            <div
+                                                style={{
+                                                    color: 'rgba(0, 255, 136, 0.7)',
+                                                    fontSize: '12px',
+                                                    marginBottom: '4px',
+                                                }}
+                                            >
+                                                Module ID
+                                            </div>
+                                            <div style={{ color: '#e0f0ff', fontSize: '14px', fontFamily: 'monospace' }}>
+                                                {moduleId}
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div
+                                                style={{
+                                                    color: 'rgba(0, 255, 136, 0.7)',
+                                                    fontSize: '12px',
+                                                    marginBottom: '4px',
+                                                }}
+                                            >
+                                                Base Image URL
+                                            </div>
+                                            <div
+                                                style={{
+                                                    color: '#e0f0ff',
+                                                    fontSize: '12px',
+                                                    wordBreak: 'break-all',
+                                                    opacity: 0.9,
+                                                }}
+                                            >
+                                                {editedModule.baseImageUrl || 'None'}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </GlassPanel>
+                    </motion.div>
+                </motion.div>
+            </AnimatePresence>
+
+            <Dialog
+                open={confirmDialog.open}
+                onClose={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
+                PaperProps={{
+                    style: {
+                        backgroundColor: 'rgba(0, 20, 40, 0.95)',
+                        border: '2px solid rgba(0, 255, 136, 0.5)',
+                        borderRadius: '8px',
+                        color: '#e0f0ff',
+                    },
+                }}
+            >
+                <DialogTitle style={{ color: '#00ff88' }}>{confirmDialog.title}</DialogTitle>
+                <DialogContent>
+                    <p style={{ margin: 0, color: '#e0f0ff' }}>{confirmDialog.message}</p>
+                </DialogContent>
+                <DialogActions style={{ padding: '16px 24px' }}>
+                    <Button
+                        variant="secondary"
+                        onClick={() => setConfirmDialog((prev) => ({ ...prev, open: false }))}
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        variant="primary"
+                        onClick={() => confirmDialog.onConfirm?.()}
+                    >
+                        Confirm
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
+    );
+};
