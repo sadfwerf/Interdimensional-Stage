@@ -78,12 +78,6 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
     readonly DEFAULT_TYPE_OUT_SPEED = 20;
     readonly bannedTagsDefault = [
         'FUZZ',
-        'child',
-        'teenager',
-        'underage',
-        'famous people',
-        'celebrity',
-        'real person',
         'feral'
     ];
     // At least one of these is required for a character search; some sort of gender helps indicate that the card represents a singular person.
@@ -167,11 +161,6 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
             chatState
         } = data;
 
-        console.log(characters);
-        // voice_id is in the data but not on the Character type. However, it is the only field in the character data that is irreplicable by other means.
-        // I believe it is the only way to verify that this chat involves the official PARC bot.
-        this.isAuthenticated = Object.values(characters).some((c: any) => c['voice_id'] === '289ac37e-b1fb-46db-a027-d76b88afaaaa');
-        console.log('Authenticated:', this.isAuthenticated);
 
         console.log(chatState);
         this.saves = chatState?.saves || [];
@@ -194,7 +183,7 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
         layout.setModuleAt(centerX - 1, centerY - 1, createModule('scrying ball', { id: `comms-${centerX - 1}-${centerY - 1}`, attributes: {} }));
         this.userId = Object.values(users)[0].anonymizedId;
         this.freshSave = { player: {name: Object.values(users)[0].name, description: Object.values(users)[0].chatProfile || ''}, 
-            directorModule: {name: 'Master\'s Study', roleName: 'Maid'},
+            directorModule: {name: 'master\'s study', roleName: 'Maid'},
             aide: {
                 name: 'Soji', 
                 description: `Your demonic assistant is acutely familiar with the arcane details of your Interdimensional Boardinghouse, so you don't have to be! ` +
