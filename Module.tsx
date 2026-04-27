@@ -641,7 +641,7 @@ export async function generateModule(name: string, stage: Stage, additionalInfor
             `ROLE NAME: Armorer\n` +
             `ROLE DESCRIPTION: Responsible for procuring new weapons and training slaves in combat\n` +
             `COST: Wealth 1, Magic 1\n` +
-            `#END#\n\n` +
+            `#END#\n\n`
         stop: ['#END'],
         include_history: true,
         max_tokens: 400,
