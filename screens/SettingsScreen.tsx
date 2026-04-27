@@ -27,7 +27,7 @@ interface SettingsData {
     characterArtStyle: ArtStyle;
     characterArtist: string;
     tagToggles: { [key: string]: boolean };
-    writeInTags: string[]; // write-in banned tags (not part of tagMap)
+    writeInTags: string[]; // write-in tags (not part of tagMap)
     language: string;
     tone: string;
 }
@@ -117,23 +117,6 @@ export const SettingsScreen: FC<SettingsScreenProps> = ({ stage, onCancel, onCon
     const initialTagToggles = Object.keys(tagMap).reduce((acc, key) => ({ ...acc, [key]: true }), {} as { [key: string]: boolean });
     const initialWriteIns: string[] = [];
 
-    if (saveFromStage?.bannedTags && Array.isArray(saveFromStage.bannedTags)) {
-        for (const banned of saveFromStage.bannedTags) {
-            let matched = false;
-            for (const [key, arr] of Object.entries(tagMap)) {
-                if (arr.includes(banned)) {
-                    initialTagToggles[key] = false; // ban the mapped key
-                    matched = true;
-                    break;
-                }
-            }
-            if (!matched) {
-                // This is a write-in tag that doesn't match any mapped tags
-                initialWriteIns.push(banned);
-            }
-        }
-    }
-
     // Load existing settings or use defaults
     const [settings, setSettings] = useState<SettingsData>({
         playerName: saveFromStage.player?.name || 'Director',
@@ -181,16 +164,6 @@ export const SettingsScreen: FC<SettingsScreenProps> = ({ stage, onCancel, onCon
         save.directorModule = save.directorModule || {};
         save.directorModule.name = settings.directorModuleName;
         save.directorModule.roleName = settings.directorModuleRoleName;
-
-        // Build bannedTags from toggles (mapped arrays) and write-in tags, deduplicated
-        const mappedBans = Object.keys(settings.tagToggles)
-            .filter(key => !settings.tagToggles[key])
-            .map(key => tagMap[key] ? tagMap[key] : [key])
-            .flat();
-
-        const writeIns = settings.writeInTags ? settings.writeInTags.filter(Boolean) : [];
-
-        save.bannedTags = Array.from(new Set([...mappedBans, ...writeIns]));
         save.disableTextToSpeech = settings.disableTextToSpeech;
         save.disableEmotionImages = settings.disableEmotionImages;
         save.disableDecorImages = settings.disableDecorImages;

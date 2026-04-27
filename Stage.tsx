@@ -76,10 +76,6 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
     readonly FETCH_AT_TIME = 10;
     readonly MAX_PAGES = 200;
     readonly DEFAULT_TYPE_OUT_SPEED = 20;
-    readonly bannedTagsDefault = [
-        'FUZZ',
-        'feral'
-    ];
     // At least one of these is required for a character search; some sort of gender helps indicate that the card represents a singular person.
     readonly actorTags = ['male', 'female', 'woman', 'man', 'masculine', 'feminine', 'non-binary', 'trans', 'genderqueer', 'genderfluid', 'agender', 'androgyne', 'intersex', 'futa', 'futanari', 'tomboy', 'goth', 'deaddove', 'nsfl', 'hermaphrodite'];
     // At least one of these is required for a faction search; helps indicate that the card has a focus on setting or tone.
