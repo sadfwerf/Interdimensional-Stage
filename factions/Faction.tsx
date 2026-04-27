@@ -94,10 +94,7 @@ export async function loadReserveFaction(fullPath: string, stage: Stage): Promis
     data.personality = data.personality.replace(/{/g, '(').replace(/}/g, ')');
 
     // Check for non-english characters
-    if (Object.keys(bannedWordSubstitutes).some(word => data.personality.toLowerCase().includes(word) || data.name.toLowerCase().includes(word))) {
-        console.log(`Immediately discarding faction due to banned words: ${data.name}`);
-        return null;
-    } else if (/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/.test(`${data.name}${data.personality}`)) {
+    if (/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaff]/.test(`${data.name}${data.personality}`)) {
         console.log(`Immediately discarding faction due to non-english characters: ${data.name}`);
         return null;
     }
@@ -253,7 +250,7 @@ export async function generateFactionModule(faction: Faction, stage: Stage): Pro
             `Background: This game is a high fantasy multiverse setting that pulls characters from across eras and timelines and settings. ` +
             `The player of this game, ${stage.getSave().player.name}, manages a interdimensional boarding house called the Mansion, which captures and enslaves victims from alternate dimensions to build an evil slave empire.` +
             `with the goal of placing these slaves into a new role in this world. These new roles are offered by external factions, generally in exchange for a finder's fee or reputation boost. ' +
-            `\n\nNarrative Tone:\n${stage.getSave().tone || stage.TONE_MAP['Original']}` +
+
             `\n\nModules:\nModules are rooms and facilities that make up the Mansion; each module has a function varying between utility and entertainment or anything inbetween, and serve as a backdrop for various interactions and events. ` +
             `Each of the game's factions can offer the player a unique module to unlock for their Mansion, generally following the themes of that faction, while avoiding content that is too similar to the Existing Modules. ` +
             `Every module similarly offers a slave-assignable role with an associated responsibility or purpose, which can again vary wildly between practical and whimsical.\n\n` +
