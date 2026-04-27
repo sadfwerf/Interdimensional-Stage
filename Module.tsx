@@ -65,7 +65,7 @@ export const STATION_STAT_PROMPTS: Record<StationStat, Record<StatRating, string
     'Magic': {
         [StatRating.POOR]: 'The Mansion is plagued by frequent magical failures, unlit torches, and structural issues, making it barely operational.',
         [StatRating.BELOW_AVERAGE]: 'The Mansion experiences occasional magical problems and minor structural concerns that need attention.',
-        [StatRating.AVERAGE]: 'The Mansion is generally functional with standard magic keeping systems operational, if finicky.',
+        [StatRating.AVERAGE]: 'The Mansion is generally functional with standard magic keeping the mansion operational, if finicky.',
         [StatRating.GOOD]: 'The Mansion runs smoothly with well-maintained magical bindings and minimal issues.',
         [StatRating.EXCELLENT]: 'The Mansion boasts state-of-the-art magic and impeccable structural integrity, operating flawlessly.'
     },
@@ -88,7 +88,7 @@ export const STATION_STAT_PROMPTS: Record<StationStat, Record<StatRating, string
         [StatRating.BELOW_AVERAGE]: 'Security measures are weak, leading to occasional malfeasance and safety concerns among inhabitants. Wandering heroes may hear rumors of the Master and seek to challenge him.',
         [StatRating.AVERAGE]: 'The Mansion has standard security protocols in place; inhabitants may occasionally act out but are generally kept in check.',
         [StatRating.GOOD]: 'Security is robust, effectively protecting the Mansion and its inhabitants from threats.',
-        [StatRating.EXCELLENT]: 'The Mansion boasts top-tier security systems, ensuring unparalleled safety and protection for all.'
+        [StatRating.EXCELLENT]: 'The Mansion boasts top-tier security magic, ensuring unparalleled safety and protection for all.'
     },
     'Harmony': {
         [StatRating.POOR]: 'Social tensions run high and morale is non-existent, leading to frequent conflicts and a toxic atmosphere among inhabitants.',
@@ -340,7 +340,9 @@ defaultImageUrl: 'https://media.charhub.io/52526331-005c-416f-9354-c325a14ee4af/
             // Can have only one in stage.getSave().layout:
             return stage.getLayout().getModulesWhere(m => m.type === 'study').length === 0;
         }
-  
+    },
+};
+
 /**
  * Register a custom faction module template at runtime
  */
@@ -630,7 +632,7 @@ export async function generateModule(name: string, stage: Stage, additionalInfor
             `DESCRIPTION: A vivid visual description of the module's appearance, to be fed into image generation.\n` +
             `ROLE NAME: The simple title of the role associated with this module (1-2 words).\n` +
             `ROLE DESCRIPTION: A brief summary of the responsibilities and duties associated with this role.\n` +
-            `COST: The resource cost to build this module, specified as 1-3 points of one or two station stats. Available stats are: Systems, Comfort, Provision, Security, Harmony, Wealth. Format as "StatName X, StatName Y" (e.g., "Wealth 2, Systems 1" or "Provision 2").\n` +
+            `COST: The resource cost to build this module, specified as 1-3 points of one or two station stats. Available stats are: Magic, Comfort, Provision, Security, Harmony, Wealth. Format as "StatName X, StatName Y" (e.g., "Wealth 2, Magic 1" or "Provision 2").\n` +
             `#END#\n\n` +
             `Example Response:\n` +
             `MODULE NAME: Armory\n` +
@@ -697,7 +699,7 @@ export async function generateModule(name: string, stage: Stage, additionalInfor
     const parsedCost: {[key in StationStat]?: number} = {};
     
     if (costString) {
-        // Parse cost string like "Wealth 2, Systems 1" or "Provision 2"
+        // Parse cost string like "Wealth 2, Magic 1" or "Provision 2"
         const costParts = costString.split(',').map(s => s.trim());
         
         for (const part of costParts) {
@@ -722,7 +724,7 @@ export async function generateModule(name: string, stage: Stage, additionalInfor
     // Apply default cost if parsing failed or resulted in no costs
     const finalCost = Object.keys(parsedCost).length > 0 
         ? parsedCost 
-        : { [StationStat.WEALTH]: 2, [StationStat.SYSTEMS]: 1 }; // Default: 2 Wealth, 1 Systems
+        : { [StationStat.WEALTH]: 2, [StationStat.MAGIC]: 1 }; // Default: 2 Wealth, 1 Magic
 
     const module: ModuleIntrinsic = {
         name: moduleName,

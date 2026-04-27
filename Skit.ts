@@ -94,7 +94,7 @@ export function generateSkitTypePrompt(skit: SkitData, stage: Stage, continuing:
                     `Discuss the boardinghouse's current relationships with ${Object.values(stage.getSave().factions).find(faction => faction.active && faction.reputation >= 3)?.name || 'an active and friendly faction'}, and any potential offers or missions that might be available to patients aboard the station.` : null),
                 // If some station stat is high, maybe have an event that reflects that while pushing it downward:
                 (Object.values(StationStat).some(stat => (stage.getSave().stationStats?.[stat] || 3) >= 7) ?
-                    `An event occurs that reflects the boardinghouse's high ${Object.values(StationStat).find(stat => (stage.getSave().stationStats?.[stat] || 3) >= 7) || 'Systems'} stat, but also threatens to lower it.` :  '') +
+                    `An event occurs that reflects the boardinghouse's high ${Object.values(StationStat).find(stat => (stage.getSave().stationStats?.[stat] || 3) >= 7) || 'Magic'} stat, but also threatens to lower it.` :  '') +
                 // If some station stat is low, maybe have an event that reflects that while pushing it up:
                 (Object.values(StationStat).some(stat => (stage.getSave().stationStats?.[stat] || 3) <= 3) ?
                     `An event occurs that reflects the boardinghouse's low ${Object.values(StationStat).find(stat => (stage.getSave().stationStats?.[stat] || 3) <= 3) || 'Morale'} stat, but also offers an opportunity to raise it.` :  ''),
@@ -969,7 +969,7 @@ export async function generateSkitScript(skit: SkitData, stage: Stage): Promise<
                             `Where <stat> is the name of the station stat to be changed, and <value> is the amount to increase or decrease the stat by (positive or negative). ` +
                             `Multiple stat changes can be included in a single tag, separated by commas.` +
                             `Full Examples:\n` +
-                            `[STATION: Systems +2, Comfort +1]\n` +
+                            `[STATION: Magic +2, Comfort +1]\n` +
                             `[STATION: Security -1]\n` +
 
                             `\n#Faction Reputation Changes:#\n` +
