@@ -1,7 +1,7 @@
 Copyright Chub AI 2024, All Rights Reserved.
 
 Section 0 -- Modifications to Definitions
-=================================================================== ====
+=======================================================================
 These definitions modify and override any subsequent 
 listing in this document.
 
