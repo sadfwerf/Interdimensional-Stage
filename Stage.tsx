@@ -84,7 +84,7 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
     readonly actorTags = ['male', 'female', 'woman', 'man', 'masculine', 'feminine', 'non-binary', 'trans', 'genderqueer', 'genderfluid', 'agender', 'androgyne', 'intersex', 'futa', 'futanari', 'tomboy', 'goth', 'deaddove', 'nsfl', 'hermaphrodite'];
     // At least one of these is required for a faction search; helps indicate that the card has a focus on setting or tone.
     readonly factionTags = ['medieval', 'fantasy', 'history', 'magic', 'robot', 'setting', 'world', 'narrator', 'scenario'];
-    readonly characterSearchQuery = `https://inference.chub.ai/search?first=${this.FETCH_AT_TIME}&exclude_tags={{EXCLUSIONS}}&page={{PAGE_NUMBER}}&tags={{SEARCH_TAGS}}&sort=random&asc=false&include_forks=false&nsfw=true&nsfl=false` +
+    readonly characterSearchQuery = `https://inference.chub.ai/search?first=${this.FETCH_AT_TIME}&page={{PAGE_NUMBER}}&tags={{SEARCH_TAGS}}&sort=random&asc=false&include_forks=false&nsfw=true&nsfl=false` +
         `&nsfw_only=false&require_images=false&require_example_dialogues=false&require_alternate_greetings=false&require_custom_prompt=false&exclude_mine=false&min_tokens=200&max_tokens=5000` +
         `&require_expressions=false&require_lore=false&mine_first=false&require_lore_embedded=false&require_lore_linked=false&my_favorites=false&inclusive_or=true&recommended_verified=false&count=false&min_tags=3`;
     readonly characterDetailQuery = 'https://inference.chub.ai/api/characters/{fullPath}?full=true';
@@ -718,7 +718,6 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
                     // Populate reserveActors; this is loaded with data from a service, calling the characterServiceQuery URL:
                     const response = await fetch(this.characterSearchQuery
                         .replace('{{PAGE_NUMBER}}', this.actorPageNumber.toString())
-                        .replace('{{EXCLUSIONS}}', exclusions ? exclusions + '%2C' : '')
                         .replace('{{SEARCH_TAGS}}', this.actorTags.concat(this.actorTags).join('%2C')));
                     const searchResults = await response.json();
                     console.log(searchResults);
@@ -765,7 +764,6 @@ export class Stage extends StageBase<InitStateType, ChatStateType, MessageStateT
                     // Populate reserveFactions; this is loaded with data from a service, calling the characterSearchQuery URL:
                     const response = await fetch(this.characterSearchQuery
                         .replace('{{PAGE_NUMBER}}', this.factionPageNumber.toString())
-                        .replace('{{EXCLUSIONS}}', exclusions ? exclusions + '%2C' : '')
                         .replace('{{SEARCH_TAGS}}', this.factionTags.concat(this.factionTags).join('%2C')));
                     const searchResults = await response.json();
                     console.log(searchResults);

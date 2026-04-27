@@ -494,9 +494,6 @@ export async function loadReserveActor(data: any, stage: Stage): Promise<Actor|n
     } else if (!newActor.profile) {
         console.log(`Discarding actor due to missing profile: ${newActor.name}`);
         return null;
-    } else if (Object.keys(bannedWordSubstitutes).some(word => newActor.getDescription().toLowerCase().includes(word))) {
-        console.log(`Discarding actor due to banned words in description: ${newActor.name}`);
-        return null;
     } else if (Object.entries(newActor.stats).every(([key, value]) => value === DEFAULT_TRAIT_MAP[key as Stat])) {
         console.log(`Discarding actor due to all default stats: ${newActor.name}`);
         return null;
